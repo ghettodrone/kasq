@@ -17,29 +17,32 @@ import youtube_dl
 
 
 
-Bot = commands.Bot(command_prefix= '.')
+Bot = commands.Bot(command_prefix= '?')
 
 Bot.remove_command('help')
 
-report_file = 605056149925920778 # int. Вставить id канала репортов, обязательно
-loglife2 = 614922990374617118
+report_file = 660923073712619530 # int. Вставить id канала репортов, обязательно
+
 
 
 @Bot.command(pass_context= True)
 async def help(ctx):
     emb = discord.Embed(title= "Info about commands", colour= 0xb0fe0a)
     emb.set_author(name= Bot.user.name , icon_url= 'https://cdn.discordapp.com/avatars/610551362161344522/a069df5f08d1cbe6b9c01e6505543c69.webp?size=1024')
-    emb.add_field(name= "**!help**", value= "__Показывает команды бота__")
-    emb.add_field(name= "**!info**", value= "__Дает информацию о пользователе__")
-    emb.add_field(name= "**!avatar**", value= "__Находит аватарку в интернете__")
-    emb.add_field(name= "**!kick**", value= "__Кикает участника с сервера__")
-    emb.add_field(name= "**!hello**", value= "__Отправляет коронное приветствие__")
-    emb.add_field(name= "**!ping**", value= "__Показывает скорость ответа бота__")
-    emb.add_field(name= "**!botinfo**", value= "__Дает полную информацию о боте__")
-    emb.add_field(name= "**!ban**", value= "__Банит игрока на сервере__")
+    emb.add_field(name= "**.help**", value= "__Показывает команды бота__")
+    emb.add_field(name= "**.info**", value= "__Дает информацию о пользователе__")
+    emb.add_field(name= "**.avatar**", value= "__Находит аватарку в интернете__")
+    emb.add_field(name= "**.kick**", value= "__Кикает участника с сервера__")
+    emb.add_field(name= "**.hello**", value= "__Отправляет коронное приветствие__")
+    emb.add_field(name= "**.ping**", value= "__Показывает скорость ответа бота__")
+    emb.add_field(name= "**.botinfo**", value= "__Дает полную информацию о боте__")
+    emb.add_field(name= "**.ban**", value= "__Банит игрока на сервере__")
     await ctx.send(embed= emb)
     await ctx.message.delete()
 	
+
+
+
 
     		
 @Bot.command()
@@ -60,6 +63,61 @@ async def join(ctx):
 			voice = await channel.connect()
 			print("Бот присоединился к {channel}\n")
 	await ctx.send("Joined {channel}")
+
+
+@Bot.command(pass_context=True, aliases=['l', 'lea'])
+async def leave(ctx):
+    channel = ctx.message.author.voice.channel
+    voice = get(Bot.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_connected():
+        await voice.disconnect()
+        print(f"The bot has left {channel}")
+        await ctx.send(f"Left {channel}")
+    else:
+        print("Bot was told to leave voice channel, but was not in one")
+        await ctx.send("Don't think I am in a voice channel")
+
+
+@Bot.command(pass_context=True, aliases=['pa', 'pau'])
+async def pause(ctx):
+
+    voice = get(Bot.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_playing():
+        print("Music paused")
+        voice.pause()
+        await ctx.send("Music paused")
+    else:
+        print("Music not playing failed pause")
+        await ctx.send("Music not playing failed pause")
+
+@Bot.command(pass_context=True, aliases=['r', 'res'])
+async def resume(ctx):
+
+    voice = get(Bot.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_paused():
+        print("Resumed music")
+        voice.resume()
+        await ctx.send("Resumed music")
+    else:
+        print("Music is not paused")
+        await ctx.send("Music is not paused")
+
+
+@Bot.command(pass_context=True, aliases=['s', 'sto'])
+async def stop(ctx):
+
+    voice = get(Bot.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_playing():
+        print("Music stopped")
+        voice.stop()
+        await ctx.send("Music stopped")
+    else:
+        print("No music playing failed to stop")
+        await ctx.send("No music playing failed to stop")
 
 
 
@@ -87,7 +145,7 @@ async def play(ctx, url: str):
         await ctx.send("ERROR: Music playing")
         return
 
-    await ctx.send("Getting everything ready now")
+
 
     voice = get(Bot.voice_clients, guild=ctx.guild)
 
@@ -126,87 +184,9 @@ async def play(ctx, url: str):
 
 
 
-@Bot.command()
-async def sex(ctx, member: discord.Member):
-	await ctx.message.delete()
-	sexGIF = [
-		"https://cdn.discordapp.com/attachments/590774024972402699/593385644080889866/2.gif",
-		"https://cdn.discordapp.com/attachments/590774024972402699/593385689194692608/5.gif",
-		"https://cdn.discordapp.com/attachments/590774024972402699/593385691413741578/14a40b221df08522.gif",
-		"https://images.sex.com/images/pinporn/2019/04/30/620/21070533.gif"
-	]
-
-	woman = discord.utils.get(ctx.message.guild.roles, name= "Eva⚢")
-	if woman in ctx.author.roles:
-		gender = ["занялась", "предложила"]
-	else:
-		gender = ["занялся", "предложил"]
-
-	authorn = ctx.author.mention
-
-	membern = member.mention
-
-
-
-	check_em = discord.Embed(title= "Предложение", description= f"Пользователь {authorn} {gender[1]} пользователю {membern} занятся сексом")
-	check_em.set_footer(text= "Нажмите на соответствующую реакцию для ответа")
-
-	check_msg = await ctx.send(embed= check_em)
-	await check_msg.add_reaction('✔')
-	await check_msg.add_reaction('❌')
-	def check(reaction, user):
-		return user == member and str(reaction.emoji) == '❌' or user == member and str(reaction.emoji) == '✔'
-
-	reaction, user = await Bot.wait_for('reaction_add', check=check)
-
-	react = str(reaction.emoji)
-
-	while True:
-		print("Троллинг проверяется")
-		if react == '❌':
-			check_em_edited = discord.Embed(title= "Отказ", description= "Увы и ах, но вам отказали.", colour= 0xFF1493)
-			await check_msg.clear_reactions()
-			await check_msg.edit(embed= check_em_edited)
-			print("Троллинг не произошел")
-
-			await asyncio.sleep(3)
-
-			await check_msg.delete()
-			break
-
-		elif react == '✔':
-			print("Троллинг произошел")
-			choice = random.randint(1, 4)
-
-			if choice == 1:
-				em = discord.Embed(title= "Шалость", description= f"{authorn} {gender[0]} сексом с {membern}!", colour= 0xFF1493)
-				em.set_image(url=sexGIF[0])
-				await check_msg.clear_reactions()
-				await check_msg.edit(embed=em)
-				break
-
-			elif choice == 2:
-				em = discord.Embed(title= "Шалость", description= f"{authorn} {gender[0]} сексом с {membern}!", colour= 0xFF1493)
-				em.set_image(url=sexGIF[1])
-				await check_msg.clear_reactions()
-				await check_msg.edit(embed=em)
-				break
-			elif choice == 3:
-				em = discord.Embed(title= "Шалость", description= f"{authorn} {gender[0]} сексом с {membern}!", colour= 0xFF1493)
-				em.set_image(url=sexGIF[2])
-				await check_msg.clear_reactions()
-				await check_msg.edit(embed=em)
-				break
-			elif choice == 4:
-				em = discord.Embed(title= "Шалость", description= f"{authorn} {gender[0]} сексом с {membern}!", colour= 0xFF1493)
-				em.set_image(url=sexGIF[3])
-				await check_msg.clear_reactions()
-				await check_msg.edit(embed=em)
-				break
-
 
 @Bot.command()
-async def report(ctx, member: discord.Member, *, reason):
+async def report(ctx, member: discord.Member, reason= None):
 	channel = Bot.get_channel(report_file)
 	author = ctx.author
 	if ctx.message.guild is None:
@@ -215,162 +195,29 @@ async def report(ctx, member: discord.Member, *, reason):
 		await ctx.message.delete()
 
 		try:
-			log_report_embed = discord.Embed(title= "⚠ Report",  description= f"**Пользователь:**\n<@{member.id}>  `ID: {member.id}`\n\n**Причина:**\n`{reason}`\n\n**Канал:**\n<#{ctx.message.channel.id}>", colour= colors[2])
+			log_report_embed = discord.Embed(title= "⚠ Report",  description= f"**Пользователь:**\n<@{member.id}>  `ID: {member.id}`\n**Канал:**\n<#{ctx.message.channel.id}>\n**Причина**\n{reason}", colour= 0xFF1493)
 			log_report_embed.set_author(name= f'{ctx.message.author}  ({ctx.message.author.id})', icon_url=ctx.message.author.avatar_url)
-			log_report_embed.timestamp = datetime.utcnow()
-
 			await channel.send(embed= log_report_embed)
 
-			report_embed=discord.Embed(description= f'Ваша жалоба на <@{member.id}> принята.', colour=colors[2])
+			report_embed=discord.Embed(description= f'Ваша жалоба на <@{member.id}> принята.', colour= 0xFF1493)
 			report_embed.set_footer(text='Большая просьба воздержаться от спама, 1 жалобы на пользователя вполне достаточно.')
 			await author.send(embed= report_embed)
 		except:
 			try:
-				await author.send(embed= discord.Embed(description='⚠ Произошла ошибка. обратитесь к главному создателю!', colour= colors[2]))
+				await author.send(embed= discord.Embed(description='⚠ Произошла ошибка. обратитесь к главному создателю!', colour= 0xFF1493)) 
 			except:
 				pass
 
 
-@Bot.command()
-async def kiss(ctx, member: discord.Member = None):
-	await ctx.message.delete()
-	kissgif = [
-		"https://cdn.discordapp.com/attachments/590774024972402699/593386290314215425/5.gif",
-		"https://cdn.discordapp.com/attachments/590774024972402699/593386299944337408/395eae28b32d8cc1.gif",
-		"https://66.media.tumblr.com/5d51b3bbd64ccf1627dc87157a38e59f/tumblr_n5rfnvvj7H1t62gxao1_500.gif",
-		"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5qHhjYUbASqpHYVw_mDGPwv9pPYk2KzVa_NkiTpUGb3zg4om1mQ",
-	]
-
-	woman = discord.utils.get(ctx.message.guild.roles, name= "Eva⚢")
-	if woman in ctx.author.roles:
-		gender = ["поцеловала", "потянулась", "сделала"]
-	else:
-		gender = ["поцеловал", "потянулся", "сделал"]
-
-	authorn = ctx.author.mention
-
-	membern = member.mention
-
-	check_em = discord.Embed(title= "Предложение", description= f"Пользователь {authorn} {gender[1]} к пользователю {membern} с намериванием поцеловать")
-	check_em.set_footer(text= "Нажмите на соответствующую реакцию для ответа")
-
-	check_msg = await ctx.send(embed= check_em)
-	await check_msg.add_reaction('✔')
-	await check_msg.add_reaction('❌')
-	def check(reaction, user):
-		return user == member and str(reaction.emoji) == '❌' or user == member and str(reaction.emoji) == '✔'
-
-	reaction, user = await Bot.wait_for('reaction_add', check=check)
-
-	react = str(reaction.emoji)
-
-
-	choice = random.randint(1, 4)
-	if not member:
-		await ctx.send("Укажите пользователя!")
-
-	while True:
-		if react == '❌':
-			check_em_edited = discord.Embed(title= "Отказ", description= "Человек оттолкнул вас, и убежал в смущении", colour= 0xFF1493)
-			check_em_edited.set_footer(text= f"~~Что я не так {gender[2]}?~~")
-			await check_msg.clear_reactions()
-			await check_msg.edit(embed= check_em_edited)
-			print("Троллинг не произошел")
-
-			await asyncio.sleep(10)
-
-			await check_msg.delete()
-			break
-
-		elif react == '✔':
-			if choice == 1:
-				em = discord.Embed(title= "Поцелуй", description= f"{authorn} {gender[0]} {membern}!", colour= 0xFF1493)
-				em.set_image(url=kissgif[0])
-				await check_msg.clear_reactions()
-				await check_msg.edit(embed=em)
-				break
-
-			elif choice == 2:
-				em = discord.Embed(title= "Поцелуй", description= f"{authorn} {gender[0]} {membern}!", colour= 0xFF1493)
-				em.set_image(url=kissgif[1])
-				await check_msg.clear_reactions()
-				await check_msg.edit(embed=em)
-				break
-
-			elif choice == 3:
-				em = discord.Embed(title= "Поцелуй", description= f"{authorn} {gender[0]} {membern}!", colour= 0xFF1493)
-				em.set_image(url=kissgif[2])
-				await check_msg.clear_reactions()
-				await check_msg.edit(embed=em)
-				break
-
-			elif choice == 4:
-				em = discord.Embed(title= "Поцелуй", description= f"{authorn} {gender[0]} {membern}!", colour= 0xFF1493)
-				em.set_image(url=kissgif[3])
-				await check_msg.clear_reactions()
-				await check_msg.edit(embed=em)
-				break
 
 
 
-
-@Bot.command()
-async def angry(ctx):
-	await ctx.message.delete()
-	angerGIF = [
-		"https://media.giphy.com/media/lop8rMAJv0VfG/giphy.gif",
-		"https://thumbs.gfycat.com/RareFaroffHorseshoebat-size_restricted.gif",
-		"https://media1.tenor.com/images/cfbc067a1445d5baa5ca36cc2642a6c4/tenor.gif?itemid=5664724"
-	]
-	choice = random.randint(1, 4)
-
-	authorn = ctx.author.mention
-
-
-	if choice == 1:
-		em = discord.Embed(title= "Злость", description= f"{authorn} злится!", colour= 0x00FF00)
-		em.set_image(url=angerGIF[0])
-		await ctx.send(embed=em)
-
-	elif choice == 2:
-		em = discord.Embed(title= "Злость", description= f"{authorn} злится!", colour= 0x00FF00)
-		em.set_image(url=angerGIF[1])
-		await ctx.send(embed=em)
-
-	elif choice == 3:
-		em = discord.Embed(title= "Злость", description= f"{authorn} злится!", colour= 0x00FF00)
-		em.set_image(url=angerGIF[2])
-		await ctx.send(embed=em)
-
-
-
-
-@Bot.command(pass_context= True )
-async def helpcreate(ctx):
-    embed = discord.Embed(color=discord.Color.orange())
-    embed.set_author(name='Help | Create', icon_url='https://cdn.discordapp.com/avatars/610551362161344522/a069df5f08d1cbe6b9c01e6505543c69.webp?size=1024')
-    embed.add_field(
-        name='Title',
-        value='The first part of your input is the title of the announcement, | should be put at the end of the title and any field.\nIn the input: `e!create Contest | Details<This is a test` The title is `Contest`',
-        inline=True
-    )
-    embed.add_field(
-        name='Sections',
-        value='Separate sections with |',
-        inline=True
-    )
-    embed.add_field(
-        name='Section Headers',
-        value='^This is a section header, section headers are the first few words after a | before a < in inputed\nIn the input: `e!create Contest | Other Details<The event will take place...` Other Details would be the header',
-        inline=True
-    )
-    await ctx.send(ctx.message.channel, embed=embed)
 
 
 logfile = 614922990374617118 # int. Вставить id канала логов, обязательно
 botid = 610551362161344522 # int. Вставить id бота, обязательно
 
-status = ['за KASQ','Порно', '!help']
+status = ['за KASQ','Порно', '?help']
 
 @Bot.event
 async def on_ready():
@@ -418,48 +265,7 @@ async def say(ctx, *, value=None):
 
  
  
-dnd="do not disturb"
 
-
-@Bot.event
-async def on_member_update(before, after):
-    guild = before.guild
-    channel = Bot.get_channel(615284205957415000)
-    emb = discord.Embed(tiltle= "История присутствия пользователей", colour= 0xb0fe0a)
-    emb.add_field(name= f"🔊`[{datetime.now()}]` **{after.display_name}** играет в **{after.activity.name}**", value = 'Теперь он стал настоящим мужиком')
-    emb.add_field(name= f"🔊`[{datetime.now()}]` **{after.display_name}** теперь **{after.status}**", value = 'Пошлем его нахуй')
-    if after.activity:
-        await channel.send(embed= emb)
-    else:
-        await channel.send(embed= emb)
-
-@Bot.command(pass_context=True, name= 'ping', brief= 'Показать текущую задержку')
-@commands.cooldown(1, 1, commands.BucketType.user)
-async def ping(ctx):
-    try:
-        await ctx.message.delete()
-    except:
-        pass
-    emb = discord.Embed(title= '**Текущая задержка:**', description= f'``{Bot.ws.latency * 1000:.0f} ms``', color= 0xb0fe0a)
-    emb.set_author(name= Bot.user.name , icon_url= Bot.user.avatar_url)
-    await ctx.send(embed=emb)
-    await ctx.message.delete()
-
-
-
-@Bot.event
-async def on_message(message):
-	await Bot.process_commands(message) 
-	channel = Bot.get_channel(615284205957415000) 
-	if message.guild is None: 
-		pass
-	else:
-		if message.author.id == botid: 
-			pass
-		else:
-			msg_embed = discord.Embed(title="Send message", description=f'**Пользователь:**\n<@{message.author.id}>  `ID: {message.author.id}`\n\n**Канал:**\n<#{message.channel.id}>\n\n**Сообщение:**\n`{message.content}`', colour= 0xb0fe0a) # Создание рамки
-			msg_embed.set_footer(text=message.created_at.strftime('%Y.%m.%d-%H:%M:%S')) 
-			await channel.send(embed= msg_embed) 
 
 
 
@@ -510,88 +316,6 @@ async def get_embed(value):
 
 
 
-@Bot.event
-async def on_raw_reaction_add(payload):
-    if payload.message_id == 613801601110376489:
-        print(payload.emoji.name)
-        guild_id = payload.guild_id
-        guild = discord.utils.find(lambda g : g.id == guild_id, Bot.guilds)
-        role = discord.utils.find(lambda r : r.name == payload.emoji.name, guild.roles)
-
-        if payload.emoji.name == 'thinkcpp':
-            print("C++ Role")
-            role = discord.utils.get(guild.roles, name= 'c++')
-        elif payload.emoji.name == '1887_python':
-            print("Python Role")
-            role = discord.utils.get(guild.roles, name= 'python')
-        elif payload.emoji.name == '9136_js':
-            print("JavaScript Role")
-            role = discord.utils.get(guild.roles, name= 'javascript' )
-        elif payload.emoji.name == 'java':
-            print("Java Role")
-            role = discord.utils.get(guild.roles, name= 'java')
-        elif payload.emoji.name == 'thinksharp':
-            print("C# Role")
-            role = discord.utils.get(guild.roles, name= 'c#' )
-        
-        else:
-            role = discord.utils.get(guild.roles, name= payload.emoji.name)
-
-
-        if role is not None:
-            member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
-            if member is not None:
-                await member.add_roles(role)
-                print("done")
-            else:
-                print("Member not found.")
-        else:
-            print("Role not found.")
-
-
-
-
-@Bot.event
-async def on_raw_reaction_remove(payload):
-    if payload.message_id == 613801601110376489:
-        print(payload.emoji.name)
-        guild_id = payload.guild_id
-        guild = discord.utils.find(lambda g : g.id == guild_id, Bot.guilds)
-
-        if payload.emoji.name == '':
-            print("C++ Role")
-            role = discord.utils.get(guild.roles, name= 'c++')
-        elif payload.emoji.name == '1887_python':
-            print("Python Role")
-            role = discord.utils.get(guild.roles, name= 'python')
-        elif payload.emoji.name == '9136_js':
-            print("JavaScript Role")
-            role = discord.utils.get(guild.roles, name= 'javascript' )
-        elif payload.emoji.name == 'java':
-            print("Java Role")
-            role = discord.utils.get(guild.roles, name= 'java')
-        elif payload.emoji.name == 'thinksharp':
-            print("C# Role")
-            role = discord.utils.get(guild.roles, name= 'c#' )
-        
-        else:
-            role = discord.utils.get(guild.roles, name= payload.emoji.name)
-
-
-        if role is not None:
-            member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
-            if member is not None:
-                await member.remove_roles(role)
-                print("done")
-            else:
-                print("Member not found.")
-        else:
-            print("Role not found.")
-
-
-
-
-
 
 
 @Bot.command(pass_context= True)
@@ -610,12 +334,6 @@ async def kick(ctx, member: discord.Member, reason= None):
     emb = discord.Embed(title= "**Участник __{}__, был кикнут.**".format(member.name), colour= 0x3600ff)
     await ctx.send(embed= emb)
 
-
-
-@Bot.command(pass_contex= True)
-async def hello(ctx):
-    await ctx.send("Дарова, пес, {}".format(ctx.message.author.mention))
-    await ctx.message.delete()
 
 
 
@@ -831,19 +549,12 @@ async def unban(ctx, member : discord.Member = None, *, reason = None): # Раз
 async def on_member_join(member): 
     role = discord.utils.get(member.guild.roles, name= "Игрок")
     channel = Bot.get_channel(635550925439762462)
-    emb = discord.Embed(title= "Привет!, ** {} **".format(member.name), description= "Теперь ты стал настоящим репаком :D", color= 0x3600ff)
-    emb.set_image(url= 'https://cdn.discordapp.com/attachments/612065478533185558/613234432073138208/AngryGreedyHumpbackwhale-size_restricted.gif')
+    emb = discord.Embed(title= "Привет!, ** {} **".format(member.name), description= "Советую, заглянуть в канал #правила.\n Если у тебя возникли какие-то вопросы - смело задавай их в канале #помощь или лично разработчику @andrey benzo!", color= 0x3600ff)
     emb.set_author(name= Bot.user.name , icon_url= 'https://cdn.discordapp.com/avatars/610551362161344522/a069df5f08d1cbe6b9c01e6505543c69.webp?size=1024')
+    emb.set_image(url= 'https://cdn.discordapp.com/attachments/635550925439762462/660543951270314004/1540398935_enmdAk5.gif')
     await channel.send(embed= emb) 
     await member.add_roles(role)
 
-@Bot.event
-async def on_member_remove(member): 
-    channel = Bot.get_channel(635550925439762462)
-    emb = discord.Embed(title= "Пока!, ** {} **".format(member.name), description= "Теперь ты не настоящий репак :D", color= 0x3600ff)
-    emb.set_image(url= 'https://cdn.discordapp.com/attachments/612065478533185558/613234432073138208/AngryGreedyHumpbackwhale-size_restricted.gif')
-    emb.set_author(name= Bot.user.name , icon_url= 'https://cdn.discordapp.com/avatars/610551362161344522/a069df5f08d1cbe6b9c01e6505543c69.webp?size=1024')
-    await channel.send(embed= emb) 
 
 
 
@@ -851,6 +562,6 @@ async def on_member_remove(member):
 
 token = os.environ.get('BOT_TOKEN')
 
-Bot.run(str(token))	
+Bot.run(str(token))
 
 
