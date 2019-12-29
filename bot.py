@@ -849,6 +849,8 @@ async def on_member_remove(member):
 
 
 
-Bot.run("your token")
+token = os.environ.get('BOT_TOKEN')
+
+Bot.run(str(token))	
 
 
