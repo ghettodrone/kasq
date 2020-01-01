@@ -559,6 +559,6 @@ async def on_member_join(member):
 
 
 
-Bot.run('NjEwNTUxMzYyMTYxMzQ0NTIy.XgzXGA.MkP59m194Nj-LLBvgzj8ghCMmVA')
+Bot.run('NjEwNTUxMzYyMTYxMzQ0NTIy.XgzZPg.TFqCJm6jtArmkSoDOfEHhRZi_j0')
 
 
