@@ -15,7 +15,7 @@ from discord.utils import get
 import youtube_dl
 
 
-
+aaa = ['hui']
 
 Bot = commands.Bot(command_prefix= '?')
 
